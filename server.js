@@ -7,6 +7,7 @@ var werewolf = io.of('werewolf')
 
 var running = false;
 var werewolfList = new Array();
+var user = new Array();
 
 app.use(express.static('public'));
 
@@ -30,11 +31,6 @@ io.on('connection', function(socket) {
         console.log('a user connected');
         socket.join('farmer');
     }
-
-    socket.on('set username', function(name){
-        if(!running)
-            io.emit('chat message', 'Hello I ams!');
-    });
 
     socket.on('start', function(){
         console.log('Game has started');
@@ -60,10 +56,10 @@ io.on('connection', function(socket) {
         
     })
 
-    socket.on('chat message', function(msg, night) {
+    socket.on('chat message', function(name, msg, night) {
         console.log(msg);
         if (!night){
-            io.emit('chat message', msg);
+            io.emit('chat message', name, msg);
             console.log('day');
         }
         else
@@ -79,15 +75,19 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
-    function check_username(uname) {
-        if (uname == '_')
+    function check_username(name) {
+        if (user.indexOf(name) != -1)
             return false;
         return true;
     }
 
-    socket.on('check username', function(uname) {
-        console.log(uname);
-        socket.emit('checked username', check_username(uname));
+    socket.on('set username', function(name) {
+        console.log(name);
+        socket.emit('checked username', check_username(name));
+        if(check_username(name) && !running){
+            io.emit('chat message', name, 'Hello I ams!');
+            user.push(name);
+        }
     });
 });
 
