@@ -3,31 +3,43 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var werewolf = io.of('werewolf')
+
+var running = false;
+
 app.use(express.static('public'));
 
 io.on('connection', function(socket) {
     console.log('a user connected');
-    socket.join('main');
-    socket.broadcast.to('main').emit('chat message', 'hi from ' + socket.id);
+    if(running)
+        socket.join('spectator');
+
+    socket.on('user_name', function(name){
+        if(!running)
+            io.to('main').emit('chat message', name, 'Hello I ams!');
+    });
+
+    socket.on('start', function(){
+        running = true;
+    })
+
+    socket.on('chat message', function(msg, night) {
+        if (!night)
+            io.emit('chat message', msg);
+        else
+            werewolf.emit('chat message', msg);
+    });
+
+    socket.on('join werewolf', function(enter) {
+        if (enter) {
+            socket.join('werewolf');
+        } else {
+            socket.leave('werewolf');
+        }
+    });
 
     socket.on('disconnect', function() {
         console.log('user disconnected');
-    });
-
-    socket.on('chat message', function(msg) {
-        if (socket.rooms.secret == undefined) {
-            io.to('main').emit('chat message', msg);
-        } else {
-            io.to('secret').emit('chat message', msg);
-        }
-    });
-
-    socket.on('join secret', function(enter) {
-        if (enter) {
-            socket.join('secret');
-        } else {
-            socket.leave('secret');
-        }
     });
 });
 
