@@ -27,25 +27,26 @@ $(document).ready(function () {
     });
 
     $('#send_button').on('click', function() {
-        if ($('#m').val() != '') {
-            if (msg == '\\info') {
+        var msg = $('#m').val();
+        if (msg != '') {
+            if (msg == '/info') {
                 show_snackbar('The city i don\'t know is ');
             }
-            if (msg == '\\night') {
+            if (msg == '/night') {
                 $('.card').each(function() {
                     if ($(this).children('p').text() != '_') {
                         $(this).children('.icon').attr('src', 'werewolf.svg');
                     }
                 });
             }
-            if (msg == '\\day') {
+            if (msg == '/day') {
                 $('.card').each(function() {
                     if ($(this).children('p').text() != '_') {
                         $(this).children('.icon').attr('src', 'villager.svg');
                     }
                 });
             }
-            if (msg == '\\start') {
+            if (msg == '/start') {
                 socket.emit('start');
             }
             else{
@@ -76,7 +77,7 @@ $(document).ready(function () {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
         $('#messages').append('<li class="message-item"><span class="gicon"></span><span class="nickname">' + name + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
-        $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));   
+        $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));
     });
 
     socket.on('werewolf', function(obj) {
