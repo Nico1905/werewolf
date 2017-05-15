@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $('#myModal').modal('show');
+    //$('#myModal').modal('show');
 
 
     var socket = io();
@@ -13,8 +13,31 @@ $(document).ready(function () {
     }
 
     $('#send_button').click(function() {
+        var msg = $('#m').val();
         if ($('#m').val() != '') {
-            socket.emit('chat message', $('#m').val());
+            if (msg == '\\info') {
+                show_snackbar('The city i don\'t know is ');
+            }
+            if (msg == '\\night') {
+                $('.card').each(function() {
+                    if ($(this).children('p').text() != '_') {
+                        $(this).children('.icon').attr('src', 'werewolf.svg');
+                    }
+                });
+            }
+            if (msg == '\\day') {
+                $('.card').each(function() {
+                    if ($(this).children('p').text() != '_') {
+                        $(this).children('.icon').attr('src', 'villager.svg');
+                    }
+                });
+            }
+            if (msg == '\\start') {
+                socket.emit('start');
+            }
+            else{
+                socket.emit('chat message', $('#m').val(), false);
+            }
             $('#m').val('');
             return false;
         }
@@ -33,34 +56,17 @@ $(document).ready(function () {
 
     $('#join_room').change(function() {
         secret = !secret;
-        socket.emit('join secret', secret);
+        socket.emit('start');
     });
 
     socket.on('chat message', function(msg) {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
         $('#messages').append('<li class="message-item"><span class="gicon"></span><span class="nickname">Nico</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
-        $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));
-        if (msg == 'show info') {
-            show_snackbar('The city i don\'t know is ');
-        }
-        if (msg == 'night') {
-            $('.card').each(function() {
-                if ($(this).children('p').text() != '_') {
-                    $(this).children('.icon').attr('src', 'werewolf.svg');
-                }
-            });
-        }
-        if (msg == 'day') {
-            $('.card').each(function() {
-                if ($(this).children('p').text() != '_') {
-                    $(this).children('.icon').attr('src', 'villager.svg');
-                }
-            });
-        }
+        $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));   
     });
 
-    socket.on('logg', function(obj) {
-        console.log(obj);
+    socket.on('werewolf', function(obj) {
+        socket.emit('join werewolf', 'test');
     });
 });
