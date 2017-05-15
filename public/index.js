@@ -7,7 +7,6 @@ $(document).ready(function () {
 
     var socket = io();
     var secret = false;
-    var name;
 
     function show_snackbar(text) {
         $('#snackbar').text(text);
@@ -17,7 +16,6 @@ $(document).ready(function () {
 
     $('#join_button').on('click', function() {
         socket.emit('set username', $('#username-input').val());
-        name = $('#username-input').val();
     });
 
     socket.on('checked username', function(valid) {
@@ -25,7 +23,6 @@ $(document).ready(function () {
             $('#join_modal').modal("hide");
         } else {
             $('.join-error').removeClass('blank');
-            name = '';
         }
     });
 
@@ -52,7 +49,7 @@ $(document).ready(function () {
                 socket.emit('start');
             }
             else{
-                socket.emit('chat message', name, $('#m').val(), false);
+                socket.emit('chat message', $('#m').val(), false);
             }
             $('#m').val('');
             return false;
