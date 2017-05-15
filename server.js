@@ -56,10 +56,10 @@ io.on('connection', function(socket) {
         
     })
 
-    socket.on('chat message', function(name, msg, night) {
+    socket.on('chat message', function(msg, night) {
         console.log(msg);
         if (!night){
-            io.emit('chat message', name, msg);
+            io.emit('chat message', socket['name'], msg);
             console.log('day');
         }
         else
@@ -85,6 +85,7 @@ io.on('connection', function(socket) {
         console.log(name);
         socket.emit('checked username', check_username(name));
         if(check_username(name) && !running){
+            socket['name'] = name;
             io.emit('chat message', name, 'Hello I ams!');
             user.push(name);
         }
