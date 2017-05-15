@@ -1,7 +1,9 @@
 $(document).ready(function () {
 
-    //$('#myModal').modal('show');
-
+    $('#join_modal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 
     var socket = io();
     var secret = false;
@@ -12,8 +14,19 @@ $(document).ready(function () {
         setTimeout(function(){ $('#snackbar').removeClass('show'); }, 3000);
     }
 
-    $('#send_button').click(function() {
-        var msg = $('#m').val();
+    $('#join_button').on('click', function() {
+        socket.emit('check username', $('#username-input').val());
+    });
+
+    socket.on('checked username', function(valid) {
+        if (valid) {
+            $('#join_modal').modal("hide");
+        } else {
+            $('.join-error').removeClass('blank');
+        }
+    });
+
+    $('#send_button').on('click', function() {
         if ($('#m').val() != '') {
             if (msg == '\\info') {
                 show_snackbar('The city i don\'t know is ');

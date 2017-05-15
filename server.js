@@ -78,6 +78,17 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log('user disconnected');
     });
+
+    function check_username(uname) {
+        if (uname == '_')
+            return false;
+        return true;
+    }
+
+    socket.on('check username', function(uname) {
+        console.log(uname);
+        socket.emit('checked username', check_username(uname));
+    });
 });
 
 http.listen(3000, function(){

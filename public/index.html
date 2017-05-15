@@ -15,19 +15,25 @@
 </head>
 <body>
 
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Modal title</h4>
-          </div>
-          <div class="modal-body">
-            <p>Welcome Message</p>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    <div class="modal fade" id="join_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Enter your Username</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="username-input">Username:</label>
+                            <input type="text" class="form-control" id="username-input" maxlength="8">
+                        </div>
+                        <button type="button" id="join_button" class="btn btn-success">Join</button>
+                    </form>
+                    <div class="join-error blank">This Username is invalid</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-md-8">
         <div class="card">
@@ -114,11 +120,7 @@
     </div>
 
     <div id="snackbar"></div>
-    <!-- <ul id="messages"></ul>
-    <form action="">
-        <input id="m" autocomplete="off"/>
-        <button>Send</button>
-    </form> -->
+
     <input type="checkbox" id="join_room">Join Special Room</input>
 </body>
 </html>

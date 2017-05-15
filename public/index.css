@@ -377,3 +377,7 @@ body {
     overflow: hidden;
     margin-bottom: 5px;
 }
+
+.join-error {
+    color: #CF000F;
+}
