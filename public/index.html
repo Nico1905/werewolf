@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css?family=Itim" rel="stylesheet">
+</head>
+<body>
+    <div class="col-md-8">
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+            <img src="werewolf.svg" class="icon-small">
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+        <div class="card">
+            <img src="villager.svg" class="icon">
+            <p class="card-username">Username</p>
+        </div>
+    </div>
+
+    <div class="chat-window">
+        <div class="title-bar">
+            <div class="window-controls"></div>
+            <span>chat window</span>
+        </div>
+        <div class="app-content">
+            <div class="messages-container">
+                <div class="messages-wrapper" id="mw">
+                    <ul id="messages"></ul>
+                </div>
+            </div>
+            <div class="user-input-wrapper">
+                <form action="">
+                    <input id="m" class="message-input" placeholder="Your message ..." autocomplete="off" />
+                    <button id="send_button" class="message-button">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="snackbar"></div>
+    <!-- <ul id="messages"></ul>
+    <form action="">
+        <input id="m" autocomplete="off"/>
+        <button>Send</button>
+    </form> -->
+    <input type="checkbox" id="join_room">Join Special Room</input>
+
+    <script>
+        var socket = io();
+        var secret = false;
+
+        function show_snackbar(text) {
+            $('#snackbar').text(text);
+            $('#snackbar').addClass('show');
+            setTimeout(function(){ $('#snackbar').removeClass('show'); }, 3000);
+        }
+
+        $('#send_button').click(function() {
+            if ($('#m').val() != '') {
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+                return false;
+            }
+            return false;
+        });
+
+        $('.card').on('click', function() {
+            $(this).addClass('flipped');
+            $(this).children('.icon').attr('src', 'tombstone.svg');
+            $(this).children('.icon-small').remove();
+            if ($(this).children('p').text() != '_') {
+                show_snackbar($(this).children('p').text() + ' died');
+            }
+            $(this).children('p').text('_');
+        });
+
+        $('#join_room').change(function() {
+            secret = !secret;
+            socket.emit('join secret', secret);
+        });
+
+        socket.on('chat message', function(msg) {
+            var now = new Date(Date.now());
+            var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+            $('#messages').append('<li class="message-item"><span class="gicon"></span><span class="nickname">Nico</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+            $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));
+            if (msg == 'show info') {
+                show_snackbar('The city i don\'t know ');
+            }
+            if (msg == 'night') {
+                $('.card').each(function() {
+                    if ($(this).children('p').text() != '_') {
+                        $(this).children('.icon').attr('src', 'werewolf.svg');
+                    }
+                });
+            }
+            if (msg == 'day') {
+                $('.card').each(function() {
+                    if ($(this).children('p').text() != '_') {
+                        $(this).children('.icon').attr('src', 'villager.svg');
+                    }
+                });
+            }
+        });
+
+        socket.on('logg', function(obj) {
+            console.log(obj);
+        });
+    </script>
+</body>
+</html>
