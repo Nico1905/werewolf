@@ -2,7 +2,7 @@
 
 # this is a werewolf game
 
->>feel free to add a real readme
+>feel free to add a real readme
 
 # install
 
