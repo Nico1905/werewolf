@@ -8,5 +8,16 @@
   },
   "scripts": {
     "start": "node server.js"
-  }
+  },
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nico1905/werewolf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nico1905/werewolf/issues"
+  },
+  "homepage": "https://github.com/Nico1905/werewolf#readme"
 }
