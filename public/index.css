@@ -1,146 +1,159 @@
 body {
-  background: #21252B;
+    background: #21252B;
 }
+
 .chat-window {
-  position: relative;
-  width: auto;
-  height: 100vh;
-  background: #2A303A;
-  overflow: hidden;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    width: auto;
+    height: 100vh;
+    background: #2A303A;
+    overflow: hidden;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 }
+
 .chat-window .title-bar {
-  background: #1B1E23;
-  min-height: 40px;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-  line-height: 40px;
-  font-size: 14px;
+    background: #1B1E23;
+    min-height: 40px;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
 }
+
 .chat-window .app-content {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  padding-top: 40px;
-  box-sizing: border-box;
-  font-size: 14px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding-top: 40px;
+    box-sizing: border-box;
+    font-size: 14px;
 }
+
 .chat-window .app-content .user-input-wrapper {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  height: 40px;
-  transition: height 0.2s linear;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    transition: height 0.2s linear;
 }
+
 .chat-window .app-content .user-input-wrapper .message-input {
-  resize: none;
-  width: 80%;
-  box-sizing: border-box;
-  height: 40px;
-  border: 0;
-  border-radius: 3px;
-  outline: none;
-  padding: 0 10px;
-  line-height: 40px;
-  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.2);
-  color: rgba(0, 0, 0, 0.7);
-  transition: background 0.2s linear, height 0.2s linear;
+    resize: none;
+    width: 80%;
+    box-sizing: border-box;
+    height: 40px;
+    border: 0;
+    border-radius: 3px;
+    outline: none;
+    padding: 0 10px;
+    line-height: 40px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(0, 0, 0, 0.7);
+    transition: background 0.2s linear, height 0.2s linear;
 }
+
 .chat-window .app-content .user-input-wrapper .message-input:focus {
-  background: #ecf0f1;
-  color: rgba(0, 0, 0, 0.8);
+    background: #ecf0f1;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .chat-window .app-content .user-input-wrapper .message-button {
-  resize: none;
-  width: 18%;
-  box-sizing: border-box;
-  height: 40px;
-  border: 0;
-  border-radius: 3px;
-  outline: none;
-  padding: 0 10px;
-  line-height: 40px;
-  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.2);
-  color: rgba(0, 0, 0, 0.7);
-  transition: background 0.2s linear, height 0.2s linear;
+    resize: none;
+    width: 18%;
+    box-sizing: border-box;
+    height: 40px;
+    border: 0;
+    border-radius: 3px;
+    outline: none;
+    padding: 0 10px;
+    line-height: 40px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(0, 0, 0, 0.7);
+    transition: background 0.2s linear, height 0.2s linear;
 }
+
 .chat-window .app-content .user-input-wrapper .message-button:focus {
-  background: #ecf0f1;
-  color: rgba(0, 0, 0, 0.8);
+    background: #ecf0f1;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .chat-window .app-content .user-input-wrapper .emoji-icon {
-  color: rgba(0, 0, 0, 0.4);
-  display: block;
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  font-size: 24px;
-  cursor: pointer;
+    color: rgba(0, 0, 0, 0.4);
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    font-size: 24px;
+    cursor: pointer;
 }
+
 .chat-window .app-content .messages-container {
-  position: relative;
+    position: relative;
 }
+
 .chat-window .app-content .messages-container:before {
-  display: block;
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 20px;
-  height: 15px;
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2a303a+10,7db9e8+100&1+10,0+100 */
-  background: -moz-linear-gradient(top, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2a303a', endColorstr='#007db9e8', GradientType=0);
-  /* IE6-9 */
-  z-index: 1;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 20px;
+    height: 15px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2a303a+10,7db9e8+100&1+10,0+100 */
+    background: -moz-linear-gradient(top, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
+    /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
+    /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #2a303a 10%, rgba(125, 185, 232, 0) 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2a303a', endColorstr='#007db9e8', GradientType=0);
+    /* IE6-9 */
+    z-index: 1;
 }
+
 .chat-window .app-content .messages-container:after {
-  display: block;
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 20px;
-  height: 15px;
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,2a303a+90&0+0,1+90 */
-  background: -moz-linear-gradient(top, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007db9e8', endColorstr='#2a303a', GradientType=0);
-  /* IE6-9 */
+    display: block;
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 20px;
+    height: 15px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,2a303a+90&0+0,1+90 */
+    background: -moz-linear-gradient(top, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
+    /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
+    /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(125, 185, 232, 0) 0%, #2a303a 90%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007db9e8', endColorstr='#2a303a', GradientType=0);
+    /* IE6-9 */
 }
+
 .chat-window .app-content .messages-wrapper {
-  height: 88vh;
-  overflow-y: auto;
-  margin-right: 5px;
-  position: relative;
-  transition: height 0.2s linear;
+    height: 88vh;
+    overflow-y: auto;
+    margin-right: 5px;
+    position: relative;
+    transition: height 0.2s linear;
 }
+
 .chat-window .app-content .messages-wrapper ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
+
 .chat-window .app-content .messages-wrapper ul .message-item {
-  position: relative;
-  color: #ecf0f1;
-  padding-top: 18px;
-  margin: 12px 10px 12px 55px;
+    position: relative;
+    color: #ecf0f1;
+    padding-top: 18px;
+    margin: 12px 10px 12px 55px;
 }
 
 .chat-window .app-content .messages-wrapper ul .message-item .gicon:before {
@@ -201,66 +214,70 @@ body {
 }
 
 .chat-window .app-content .messages-wrapper ul .message-item .nickname {
-  color: #ecf0f1;
-  text-decoration: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-weight: bold;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.35);
+    color: #ecf0f1;
+    text-decoration: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
 }
+
 .chat-window .app-content .messages-wrapper ul .message-item .timestamp {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 12px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
 }
+
 .chat-window .app-content .messages-wrapper ul .message-item .message {
-  padding: 0;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.7);
+    padding: 0;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
 }
+
 .app-content.big-input .messages-wrapper {
-  height: 440px;
+    height: 440px;
 }
+
 .app-content.big-input .user-input-wrapper {
-  height: 80px;
+    height: 80px;
 }
+
 .app-content.big-input .message-input {
-  height: 80px !important;
-  line-height: 20px !important;
-  padding: 10px 10px !important;
+    height: 80px !important;
+    line-height: 20px !important;
+    padding: 10px 10px !important;
 }
 
 .app-content.big-input .message-button {
-  height: 80px !important;
-  line-height: 20px !important;
-  padding: 10px 10px !important;
+    height: 80px !important;
+    line-height: 20px !important;
+    padding: 10px 10px !important;
 }
+
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
+
 /* Track */
 ::-webkit-scrollbar-track {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 }
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
 }
+
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.4);
 }
-
-
-/*
-    Notification
-*/
 
 #snackbar {
     visibility: hidden;
@@ -307,12 +324,7 @@ body {
     to {bottom: 50%; opacity: 0;}
 }
 
-/*
-    card
-*/
-
 .card {
-    /*max number of cards: 15*/
     width: 11vw;
     height: 16.5vw;
     border-radius: 15px;
@@ -347,8 +359,6 @@ body {
 }
 
 .card:hover {
-    /*outline: 2px solid #f90;
-    outline-offset: 10px;*/
     box-shadow: inset 0 0 10px 4px #CF000F;
     border-color: #CF000F;
 }
@@ -369,7 +379,6 @@ body {
 }
 
 .card-username {
-    /*max charlength: 8*/
     text-align: center;
     color: #1b1e23;
     font-size: 15pt;
