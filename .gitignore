@@ -1,3 +1,5 @@
 node_modules/
 
 *.tex
+*.xml
+*.jpg
