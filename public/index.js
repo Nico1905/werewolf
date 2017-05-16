@@ -89,7 +89,7 @@ $(document).ready(function () {
     socket.on('story message', function(msg) {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-        $('#messages').append('<li class="message-item"><span class="sicon"></span><span class="nickname">' + name + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+        $('#messages').append('<li class="message-item"><span class="sicon"></span><span class="nickname">' + Narrator + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
     });
 
     socket.on('snackbar message', function(msg) {
