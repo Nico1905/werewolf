@@ -81,6 +81,6 @@ $(document).ready(function () {
     });
 
     socket.on('werewolf', function(obj) {
-        socket.emit('join werewolf', 'test');
+        socket.emit('join werewolf');
     });
 });
