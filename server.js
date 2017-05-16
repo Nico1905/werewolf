@@ -23,7 +23,7 @@ function waitForList(list, count) {
 
 io.on('connection', function(socket) {
     if(running){
-        io.emit('chat message', 'A new Ghost is spectating you!');
+        io.emit('story message', 'A new Ghost is spectating you!');
         socket.join('spectator');
         console.log('a spectator connected');
     }
@@ -36,7 +36,7 @@ io.on('connection', function(socket) {
         console.log('Game has started');
         running = true;
 
-        io.emit('chat message', 'Let the Games begin!!');     
+        io.emit('story message', 'Let the Games begin!!');     
         io.clients(function(error, clients){
             if (error) throw error;
             console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
@@ -45,7 +45,7 @@ io.on('connection', function(socket) {
             for (var i = count;i > 0; i--) {
                 var client = clients.splice(clients.length * Math.random() | 0, 1)[0]
                 console.log(client);
-                socket.to(client).emit('chat message', 'You are a werewolf!');
+                socket.to(client).emit('snackbar message', 'You are a werewolf!');
                 socket.to(client).emit('werewolf');
             }
 
@@ -66,9 +66,9 @@ io.on('connection', function(socket) {
             werewolf.emit('chat message', msg);
     });
 
-    socket.on('join werewolf', function(name) {
+    socket.on('join werewolf', function() {
         socket.join('werewolf');
-        werewolfList.push(name);
+        werewolfList.push(socket['name']);
     });
 
     socket.on('disconnect', function() {
