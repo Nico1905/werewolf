@@ -8,6 +8,7 @@ var werewolf = io.of('werewolf')
 var running = false;
 var werewolfList = new Array();
 var user = new Array();
+var victims = {};
 
 app.use(express.static('public'));
 
@@ -15,6 +16,7 @@ function waitForList(list, count) {
     if (list.length < count) {
         setTimeout(waitForList, 500, list, count); // setTimeout(func, timeMS, params...)
         console.log('wait...');
+        console.log(list);
     } else {
         console.log(werewolfList);
         werewolf.emit('send werewolfs', werewolfList);
@@ -29,7 +31,7 @@ io.on('connection', function(socket) {
     }
     else{
         console.log('a user connected');
-        socket.join('farmer');
+        socket.join('villager');
     }
 
     socket.on('start', function(){
@@ -45,14 +47,13 @@ io.on('connection', function(socket) {
             for (var i = count;i > 0; i--) {
                 var client = clients.splice(clients.length * Math.random() | 0, 1)[0]
                 console.log(client);
-                socket.to(client).emit('snackbar message', 'You are a werewolf!');
-                socket.to(client).emit('werewolf');
+                io.to(client).emit('snackbar message', 'You are a werewolf!');
+                io.to(client).emit('werewolf');
             }
 
-            io.emit('start game', clients.length);
+            io.emit('start game', clients.length, user);
             waitForList(werewolfList, count);
         });
-
         
     })
 
@@ -89,6 +90,23 @@ io.on('connection', function(socket) {
             io.emit('chat message', name, 'Hello I ams!');
             user.push(name);
         }
+    });
+
+    socket.on('night', function(){
+        io.emit('change night');
+        werewolf.emit('vote');
+
+        socket.on('voted', function(victim){
+            if (victims[victim] != undefined)
+                victims[victim] += 1;
+            else{
+                victims.push({
+                    key: victim,
+                    value: 1
+                });
+            }
+        });
+
     });
 });
 
