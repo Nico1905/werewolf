@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    $('form').submit(false);
+
     $('#join_modal').modal({
         backdrop: 'static',
         keyboard: false
