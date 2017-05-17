@@ -9,6 +9,11 @@ $(document).ready(function () {
 
     var socket = io();
     var secret = false;
+    var night = false;
+    var voting = false;
+    var username = '';
+    var werewolf = false;
+    var werewolf_list = [];
 
     function show_snackbar(text) {
         $('#snackbar').text(text);
@@ -17,7 +22,8 @@ $(document).ready(function () {
     }
 
     $('#join_button').on('click', function() {
-        socket.emit('set username', $('#username-input').val());
+        username = $('#username-input').val();
+        socket.emit('set username', username);
     });
 
     $('#send_button').on('click', function() {
@@ -27,11 +33,8 @@ $(document).ready(function () {
                 show_snackbar('The city i don\'t know is ');
             }
             if (msg == '/night') {
-                $('.card').each(function() {
-                    if ($(this).children('p').text() != '_') {
-                        $(this).children('.icon').attr('src', 'werewolf.svg');
-                    }
-                });
+                console.log('send night');
+                socket.emit('night');
             }
             if (msg == '/day') {
                 $('.card').each(function() {
@@ -44,7 +47,7 @@ $(document).ready(function () {
                 socket.emit('start');
             }
             else{
-                socket.emit('chat message', $('#m').val(), false);
+                socket.emit('chat message', $('#m').val(), night);
             }
             $('#m').val('');
             return false;
@@ -52,14 +55,20 @@ $(document).ready(function () {
         return false;
     });
 
-    $('.card').on('click', function() {
-        $(this).addClass('flipped');
-        $(this).children('.icon').attr('src', 'tombstone.svg');
-        $(this).children('.icon-small').remove();
-        if ($(this).children('p').text() != '_') {
-            show_snackbar($(this).children('p').text() + ' died');
+    $('#card-container').on('click', '.card', function() {
+        if (voting && werewolf_list.indexOf($(this).children('p').text()) == -1) {
+            socket.emit('voted', $(this).children('p').text());
+            voting = false;
+            $('.card').removeClass('card-hover');
+            $(this).addClass('card-selected');
         }
-        $(this).children('p').text('_');
+        // $(this).addClass('flipped');
+        // $(this).children('.icon').attr('src', 'tombstone.svg');
+        // $(this).children('.icon-small').remove();
+        // if ($(this).children('p').text() != '_') {
+        //     show_snackbar($(this).children('p').text() + ' died');
+        // }
+        // $(this).children('p').text('_');
     });
 
     $('#join_room').change(function() {
@@ -84,12 +93,13 @@ $(document).ready(function () {
 
     socket.on('werewolf', function() {
         socket.emit('join werewolf');
+        werewolf = true;
     });
 
     socket.on('story message', function(msg) {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-        $('#messages').append('<li class="message-item"><span class="sicon"></span><span class="nickname">' + Narrator + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+        $('#messages').append('<li class="message-item"><span class="sicon"></span><span class="nickname">Narrator</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
     });
 
     socket.on('snackbar message', function(msg) {
@@ -99,8 +109,38 @@ $(document).ready(function () {
 
     socket.on('start game', function(users) {
         console.log('start');
+        console.log(users);
         for (var i = 0; i < users.length; i++) {
             $('#card-container').append('<div class="card"><img src="villager.svg" class="icon"><p class="card-username">' + users[i] + '</p></div>');
         }
+    });
+
+    socket.on('change night', function() {
+        night = true;
+        if (werewolf) {
+            $('.card').each(function() {
+                if (werewolf_list.indexOf($(this).children('p').text()) != -1) {
+                    $(this).children('.icon').attr('src', 'werewolf.svg');
+                }
+            });
+        }
+    });
+
+    socket.on('vote', function() {
+        $('.card').each(function() {
+            if (werewolf_list.indexOf($(this).children('p').text()) == -1)
+                $(this).addClass('card-hover');
+        });
+        voting = true;
+    });
+
+    socket.on('change day', function() {
+        night = false;
+    });
+
+    socket.on('send werewolfs', function(list) {
+        werewolf_list = list;
+        console.log('got werewolves');
+        console.log(werewolf_list);
     });
 });
