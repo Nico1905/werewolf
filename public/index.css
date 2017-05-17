@@ -358,7 +358,12 @@ body {
     display: none;
 }
 
-.card:hover {
+.card-hover:hover {
+    box-shadow: inset 0 0 10px 4px #CF000F;
+    border-color: #CF000F;
+}
+
+.card-selected {
     box-shadow: inset 0 0 10px 4px #CF000F;
     border-color: #CF000F;
 }
