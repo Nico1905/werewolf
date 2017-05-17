@@ -19,7 +19,8 @@ function waitForList(list, count) {
         console.log(list);
     } else {
         console.log(werewolfList);
-        werewolf.emit('send werewolfs', werewolfList);
+        //werewolf.emit('send werewolfs', werewolfList); doesn't work
+        io.to('werewolf').emit('send werewolfs', werewolfList); // works
     }
 }
 
@@ -38,11 +39,11 @@ io.on('connection', function(socket) {
         console.log('Game has started');
         running = true;
 
-        io.emit('story message', 'Let the Games begin!!');     
+        io.emit('story message', 'Let the Games begin!!');
         io.clients(function(error, clients){
             if (error) throw error;
             console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
-            var count = Math.floor(Math.random() * clients.length/2) + 2;
+            var count = Math.floor(Math.random() * clients.length/2) + 1;
             console.log(count);
             for (var i = count;i > 0; i--) {
                 var client = clients.splice(clients.length * Math.random() | 0, 1)[0]
@@ -51,10 +52,10 @@ io.on('connection', function(socket) {
                 io.to(client).emit('werewolf');
             }
 
-            io.emit('start game', clients.length, user);
+            io.emit('start game', user);
             waitForList(werewolfList, count);
         });
-        
+
     })
 
     socket.on('chat message', function(msg, night) {
@@ -94,7 +95,8 @@ io.on('connection', function(socket) {
 
     socket.on('night', function(){
         io.emit('change night');
-        werewolf.emit('vote');
+        // werewolf.emit('vote'); doesn't work
+        io.to('werewolf').emit('vote'); // works
 
         socket.on('voted', function(victim){
             if (victims[victim] != undefined)
