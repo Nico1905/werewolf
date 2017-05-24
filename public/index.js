@@ -21,6 +21,18 @@ $(document).ready(function () {
         setTimeout(function(){ $('#snackbar').removeClass('show'); }, 3000);
     }
 
+    function kill(name) {
+        $('.card').each(function() {
+            if ($(this).children('p').text() == name) {
+                $(this).addClass('flipped');
+                $(this).children('.icon').attr('src', 'tombstone.svg');
+                $(this).children('.icon-small').remove();
+                $(this).children('p').text('_');
+                $(this).removeClass('card-selected');
+            }
+        });
+    }
+
     $('#join_button').on('click', function() {
         username = $('#username-input').val();
         socket.emit('set username', username);
@@ -56,19 +68,12 @@ $(document).ready(function () {
     });
 
     $('#card-container').on('click', '.card', function() {
-        if (voting && werewolf_list.indexOf($(this).children('p').text()) == -1) {
+        if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night)) {
             socket.emit('voted', $(this).children('p').text());
             voting = false;
             $('.card').removeClass('card-hover');
             $(this).addClass('card-selected');
         }
-        // $(this).addClass('flipped');
-        // $(this).children('.icon').attr('src', 'tombstone.svg');
-        // $(this).children('.icon-small').remove();
-        // if ($(this).children('p').text() != '_') {
-        //     show_snackbar($(this).children('p').text() + ' died');
-        // }
-        // $(this).children('p').text('_');
     });
 
     $('#join_room').change(function() {
@@ -115,14 +120,17 @@ $(document).ready(function () {
         }
     });
 
-    socket.on('change night', function() {
+    socket.on('change night', function(victim) {
         night = true;
         if (werewolf) {
             $('.card').each(function() {
-                if (werewolf_list.indexOf($(this).children('p').text()) != -1) {
+                if (werewolf_list.indexOf($(this).children('p').text()) != -1)
                     $(this).children('.icon').attr('src', 'werewolf.svg');
-                }
             });
+        }
+        if (victim != null) {
+            show_snackbar(victim + ' died');
+            kill(victim);
         }
     });
 
@@ -134,12 +142,26 @@ $(document).ready(function () {
         voting = true;
     });
 
-    socket.on('change day', function() {
+    socket.on('change day', function(victim) {
         night = false;
+        if (werewolf) {
+            $('.card').each(function() {
+                if (werewolf_list.indexOf($(this).children('p').text()) != -1)
+                    $(this).children('.icon').attr('src', 'villager.svg');
+            });
+        }
+        show_snackbar(victim + ' died');
+        kill(victim);
+        $('.card').addClass('card-hover');
+        voting = true;
     });
 
     socket.on('send werewolfs', function(list) {
         werewolf_list = list;
+        $('.card').each(function() {
+            if (werewolf_list.indexOf($(this).children('p').text()) != -1)
+                $(this).append('<img src="werewolf.svg" class="icon-small">');
+        });
         console.log('got werewolves');
         console.log(werewolf_list);
     });
