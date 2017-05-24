@@ -38,8 +38,8 @@ function maxValue(array){
     for (var key in array) {
         if(max === null)
             max = key;
-        else if(array[key] != undefined && array[max] < array[key])
-            max = array[key];
+        else if(array[max] < array[key])
+            max = key;
         console.log('Key: ' + key + ':' + array[key]);
         console.log('Max: ' + max + ':' + array[max]);
     }  
