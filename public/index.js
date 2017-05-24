@@ -161,12 +161,13 @@ $(document).ready(function () {
         if (victim == username) {
             dead = true;
             show_snackbar('You died');
+            console.log('dead');
         } else {
             show_snackbar(victim + ' died');
+            $('.card').addClass('card-hover');
+            voting = true;
         }
         kill(victim);
-        $('.card').addClass('card-hover');
-        voting = true;
     });
 
     socket.on('send werewolfs', function(list) {
