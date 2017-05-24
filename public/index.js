@@ -45,18 +45,18 @@ $(document).ready(function () {
             if (msg == '/info') {
                 show_snackbar('The city i don\'t know is ');
             }
-            if (msg == '/night') {
+            else if (msg == '/night') {
                 console.log('send night');
                 socket.emit('night');
             }
-            if (msg == '/day') {
+            else if (msg == '/day') {
                 $('.card').each(function() {
                     if ($(this).children('p').text() != '_') {
                         $(this).children('.icon').attr('src', 'villager.svg');
                     }
                 });
             }
-            if (msg == '/start') {
+            else if (msg == '/start') {
                 socket.emit('start');
             }
             else{
