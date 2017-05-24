@@ -49,7 +49,6 @@ function maxValue(array){
 function votingCompleted(){
     console.log(victims);
     var victim = maxValue(victims);
-    io.emit('change night', victim);
 
     user.splice(user.indexOf(victim), 1);
     if(werewolfList.indexOf(victim) != -1)
@@ -59,19 +58,22 @@ function votingCompleted(){
     victims = {};
 
     console.log('Night');
+    io.to('werewolf').emit('vote');
+    io.emit('change night', victim);
     waitForVoted(werewolfList, werewolfVotingCompleted);
 }
 
 function werewolfVotingCompleted(){
     console.log(victims);
     var victim = maxValue(victims);
-    io.emit('change day', victim);
 
     user.splice(user.indexOf(victim), 1);
 
     voted = 0;
     victims = {};
 
+    io.emit('change day', victim);
+    io.emit('vote');
     console.log('Day');
     waitForVoted(user, votingCompleted);
 }
