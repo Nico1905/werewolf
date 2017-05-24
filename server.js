@@ -7,6 +7,7 @@ var running = false;
 var werewolfList = new Array();
 var user = new Array();
 var victims = {};
+var voted = 0;
 
 app.use(express.static('public'));
 
@@ -18,8 +19,29 @@ function waitForList(list, count) {
     } else {
         console.log(werewolfList);
         //werewolf.emit('send werewolfs', werewolfList); doesn't work
-        io.to('werewolf').emit('send werewolfs', werewolfList); // works
+        io.to('werewolf').emit('send werewolfs', werewolfList);
     }
+}
+
+function waitForVoted(){
+    if(voted < werewolfList.length) {
+        setTimeout(waitForVoted, 500); // setTimeout(func, timeMS, params...)
+        console.log('wait...');
+    }
+    else{
+        console.log(victims);
+        io.emit('change day', maxValue(victims));
+    }
+}
+
+function maxValue(array){
+    var max = null;
+    for (var key in victims) {
+        if(max === null)
+            max = key;
+        else if(victims[max] < victims[key])
+            max = victims[key];
+    }    
 }
 
 io.on('connection', function(socket) {
@@ -96,12 +118,14 @@ io.on('connection', function(socket) {
         // werewolf.emit('vote'); doesn't work
         io.to('werewolf').emit('vote'); // works
 
+        waitForVoted();
+
         socket.on('voted', function(victim){
             if (victims[victim] != undefined)
                 victims[victim] += 1;
-            else{
+            else
                 victims[victim] = 1;
-            }
+            voted += 1;
         });
 
     });
