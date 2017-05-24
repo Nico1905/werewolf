@@ -3,8 +3,6 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var werewolf = io.of('werewolf')
-
 var running = false;
 var werewolfList = new Array();
 var user = new Array();
@@ -65,7 +63,7 @@ io.on('connection', function(socket) {
             console.log('day');
         }
         else
-            werewolf.emit('chat message', msg);
+            io.to('werewolf').emit('chat message', msg);
     });
 
     socket.on('join werewolf', function() {
@@ -102,10 +100,7 @@ io.on('connection', function(socket) {
             if (victims[victim] != undefined)
                 victims[victim] += 1;
             else{
-                victims.push({
-                    key: victim,
-                    value: 1
-                });
+                victims[victim] = 1;
             }
         });
 
