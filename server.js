@@ -37,29 +37,42 @@ function waitForVoted(list, finishFunction){
 
 function maxValue(array){
     var max = null;
-    for (var key in victims) {
+    for (var key in array) {
         if(max === null)
             max = key;
-        else if(victims[max] < victims[key])
-            max = victims[key];
+        else if(array[max] < array[key])
+            max = array[key];
+        console.log(max + ':' + array[max]);
     }  
     return max;  
 }
 
 function votingCompleted(){
     console.log(victims);
-    io.emit('change night', maxValue(victims));
+    var victim = maxValue(victims);
+    io.emit('change night', victim);
+
+    user.splice(user.indexOf(victim), 1);
+    if(werewolfList.indexOf(victim) != -1)
+        werewolfList.splice(victim, 1);
+
     voted = 0;
     victims = {};
+
+    waitForVoted(werewolfList, werewolfVotingCompleted);
 }
 
 function werewolfVotingCompleted(){
     console.log(victims);
-    io.emit('change day', maxValue(victims));
+    var victim = maxValue(victims);
+    io.emit('change day', victim);
+
+    user.splice(user.indexOf(victim), 1);
+
     voted = 0;
     victims = {};
 
-    waitForVoted(user,  votingCompleted);
+    waitForVoted(user, votingCompleted);
 }
 
 io.on('connection', function(socket) {
