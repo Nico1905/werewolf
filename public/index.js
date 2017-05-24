@@ -14,6 +14,7 @@ $(document).ready(function () {
     var username = '';
     var werewolf = false;
     var werewolf_list = [];
+    var dead = false;
 
     function show_snackbar(text) {
         $('#snackbar').text(text);
@@ -28,7 +29,7 @@ $(document).ready(function () {
                 $(this).children('.icon').attr('src', 'tombstone.svg');
                 $(this).children('.icon-small').remove();
                 $(this).children('p').text('_');
-                $(this).removeClass('card-selected');
+                $('.card').removeClass('card-selected');
             }
         });
     }
@@ -122,24 +123,31 @@ $(document).ready(function () {
 
     socket.on('change night', function(victim) {
         night = true;
-        if (werewolf) {
+        if (werewolf && !dead) {
             $('.card').each(function() {
                 if (werewolf_list.indexOf($(this).children('p').text()) != -1)
                     $(this).children('.icon').attr('src', 'werewolf.svg');
             });
         }
         if (victim != null) {
-            show_snackbar(victim + ' died');
+            if (victim == username) {
+                dead = true;
+                show_snackbar('You died');
+            } else {
+                show_snackbar(victim + ' died');
+            }
             kill(victim);
         }
     });
 
     socket.on('vote', function() {
-        $('.card').each(function() {
-            if (werewolf_list.indexOf($(this).children('p').text()) == -1)
-                $(this).addClass('card-hover');
-        });
-        voting = true;
+        if (!dead) {
+            $('.card').each(function() {
+                if (werewolf_list.indexOf($(this).children('p').text()) == -1)
+                    $(this).addClass('card-hover');
+            });
+            voting = true;
+        }
     });
 
     socket.on('change day', function(victim) {
@@ -150,7 +158,12 @@ $(document).ready(function () {
                     $(this).children('.icon').attr('src', 'villager.svg');
             });
         }
-        show_snackbar(victim + ' died');
+        if (victim == username) {
+            dead = true;
+            show_snackbar('You died');
+        } else {
+            show_snackbar(victim + ' died');
+        }
         kill(victim);
         $('.card').addClass('card-hover');
         voting = true;
