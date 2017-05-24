@@ -4,18 +4,18 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var running = false;
-var werewolfList = new Array();
-var user = new Array();
+var werewolfList = [];
+var user = [];
 var victims = {};
 var voted = 0;
 
 app.use(express.static('public'));
 
-function waitForList(list, count) {
-    if (list.length < count) {
-        setTimeout(waitForList, 500, list, count); // setTimeout(func, timeMS, params...)
+function waitForList(count) {
+    if (werewolfList.length < count) {
+        setTimeout(waitForList, 500, count); // setTimeout(func, timeMS, params...)
         console.log('wait...');
-        console.log(list);
+        console.log(werewolfList);
     } else {
         console.log(werewolfList);
         //werewolf.emit('send werewolfs', werewolfList); doesn't work
@@ -23,14 +23,15 @@ function waitForList(list, count) {
     }
 }
 
-function waitForVoted(){
-    if(voted < werewolfList.length) {
-        setTimeout(waitForVoted, 500); // setTimeout(func, timeMS, params...)
+function waitForVoted(list, finishFunction){
+    console.log(list);
+    if(voted < list.length) {
+        setTimeout(waitForVoted, 500, list, finishFunction); // setTimeout(func, timeMS, params...)
         console.log('wait...');
+        console.log(voted);
     }
     else{
-        console.log(victims);
-        io.emit('change day', maxValue(victims));
+        finishFunction();
     }
 }
 
@@ -42,6 +43,22 @@ function maxValue(array){
         else if(victims[max] < victims[key])
             max = victims[key];
     }    
+}
+
+function votingCompleted(){
+    console.log(victims);
+    io.emit('change night', maxValue(victims));
+    voted = 0;
+    victims = {};
+}
+
+function werewolfVotingCompleted(){
+    console.log(victims);
+    io.emit('change day', maxValue(victims));
+    voted = 0;
+    victims = {};
+
+    waitForVoted(user,  votingCompleted);
 }
 
 io.on('connection', function(socket) {
@@ -73,7 +90,7 @@ io.on('connection', function(socket) {
             }
 
             io.emit('start game', user);
-            waitForList(werewolfList, count);
+            waitForList(count);
         });
 
     })
@@ -114,20 +131,23 @@ io.on('connection', function(socket) {
     });
 
     socket.on('night', function(){
-        io.emit('change night');
+        io.emit('change night', null);
         // werewolf.emit('vote'); doesn't work
         io.to('werewolf').emit('vote'); // works
 
-        waitForVoted();
+        waitForVoted(werewolfList, werewolfVotingCompleted);
+    });
 
-        socket.on('voted', function(victim){
-            if (victims[victim] != undefined)
-                victims[victim] += 1;
-            else
-                victims[victim] = 1;
-            voted += 1;
-        });
+    socket.on('voted', function(victim, night){
+        console.log('voted');
+        console.log(victims[victim]);
 
+        if (victims[victim] != undefined)
+            victims[victim] += 1;
+        else
+            victims[victim] = 1;
+        voted += 1;
+        console.log(voted);
     });
 });
 
