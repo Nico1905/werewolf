@@ -15,7 +15,6 @@ function waitForList(count) {
     if (werewolfList.length < count) {
         setTimeout(waitForList, 500, count); // setTimeout(func, timeMS, params...)
         console.log('wait...');
-        console.log(werewolfList);
     } else {
         console.log(werewolfList);
         //werewolf.emit('send werewolfs', werewolfList); doesn't work
@@ -24,11 +23,9 @@ function waitForList(count) {
 }
 
 function waitForVoted(list, finishFunction){
-    console.log(list);
     if(voted < list.length) {
         setTimeout(waitForVoted, 500, list, finishFunction); // setTimeout(func, timeMS, params...)
         console.log('wait...');
-        console.log(voted);
     }
     else{
         finishFunction();
@@ -36,13 +33,15 @@ function waitForVoted(list, finishFunction){
 }
 
 function maxValue(array){
+    console.log(JSON.stringify(array, null, 4))
     var max = null;
     for (var key in array) {
         if(max === null)
             max = key;
-        else if(array[max] < array[key])
+        else if(array[key] != undefined && array[max] < array[key])
             max = array[key];
-        console.log(max + ':' + array[max]);
+        console.log('Key: ' + key + ':' + array[key]);
+        console.log('Max: ' + max + ':' + array[max]);
     }  
     return max;  
 }
@@ -59,6 +58,7 @@ function votingCompleted(){
     voted = 0;
     victims = {};
 
+    console.log('Night');
     waitForVoted(werewolfList, werewolfVotingCompleted);
 }
 
@@ -72,6 +72,7 @@ function werewolfVotingCompleted(){
     voted = 0;
     victims = {};
 
+    console.log('Day');
     waitForVoted(user, votingCompleted);
 }
 
@@ -113,7 +114,6 @@ io.on('connection', function(socket) {
         console.log(msg);
         if (!night){
             io.emit('chat message', socket['name'], msg);
-            console.log('day');
         }
         else
             io.to('werewolf').emit('chat message', msg);
