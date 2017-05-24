@@ -42,7 +42,8 @@ function maxValue(array){
             max = key;
         else if(victims[max] < victims[key])
             max = victims[key];
-    }    
+    }  
+    return max;  
 }
 
 function votingCompleted(){
