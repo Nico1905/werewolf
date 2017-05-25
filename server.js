@@ -17,7 +17,7 @@ function waitForList(count) {
         console.log('wait...');
     } else {
         console.log(werewolfList);
-        io.to('werewolf').emit('send werewolfs', werewolfList);
+        io.to('werewolf').emit('send werewolves', werewolfList);
     }
 }
 
@@ -45,6 +45,18 @@ function maxValue(array){
     return max;
 }
 
+function end(){
+    if(werewolfList.length > 0)
+        if(user.length - werewolfList.length > 0)
+            return false;
+        else
+            io.emit('story message', 'All the Villagers are dead. Werewolves, you win!');
+    else
+        io.emit('story message', 'All the Werewolves are dead. Villagers, you win!');
+    return true;
+
+}
+
 function votingCompleted(){
     console.log(victims);
     var victim = maxValue(victims);
@@ -56,10 +68,21 @@ function votingCompleted(){
     voted = 0;
     victims = {};
 
-    console.log('Night');
-    io.emit('change night', victim);
-    io.to('werewolf').emit('vote');
-    waitForVoted(werewolfList, werewolfVotingCompleted);
+    io.emit('story message', 'The Villagers killed ' + victim + '!');
+
+    if(!end()){
+        console.log('Night');
+        io.emit('change night', victim);
+
+        io.emit('story message', 'Nightfall. The Villagers go to sleep. ' +
+            'A few Villagers awake again, but they are no humans anymore. They choose their prey.');
+
+        io.to('werewolf').emit('vote');
+
+        waitForVoted(werewolfList, werewolfVotingCompleted);
+    }
+    else
+        io.emit('end');
 }
 
 function werewolfVotingCompleted(){
@@ -71,10 +94,20 @@ function werewolfVotingCompleted(){
     voted = 0;
     victims = {};
 
+    io.emit('story message', 'The dawn is breaking and the werewolves' +
+        ' change into their normal appearance. They killed ' + victim + '!');
     io.emit('change day', victim);
-    io.emit('vote');
+
+    
     console.log('Day');
-    waitForVoted(user, votingCompleted);
+    if(!end()){
+        io.emit('story message', 'The rest of the Villagers is awake now.');
+        io.emit('vote');
+        waitForVoted(user, votingCompleted);
+        io.emit('story message', 'Discuss who you want to kill!');
+    }
+    else
+        io.emit('end');
 }
 
 io.on('connection', function(socket) {
@@ -140,15 +173,21 @@ io.on('connection', function(socket) {
         socket.emit('checked username', check_username(name));
         if(check_username(name) && !running){
             socket['name'] = name;
-            io.emit('chat message', name, 'Hello I ams!');
+            io.emit('chat message', name, 'Hey, I want to play with you.');
             user.push(name);
         }
     });
 
     socket.on('night', function(){
+        console.log('Night');
         io.emit('change night', null);
+
+        io.emit('story message', 'Nightfall. The Villagers go to sleep. ' +
+            'A few Villagers awake again, but they are no humans anymore. They choose their prey.');
+
         io.to('werewolf').emit('vote');
 
+        io.emit('story message', 'The Werewolves choose their prey.');
         waitForVoted(werewolfList, werewolfVotingCompleted);
     });
 
