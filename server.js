@@ -98,7 +98,7 @@ function werewolfVotingCompleted(){
         ' change into their normal appearance. They killed ' + victim + '!');
     io.emit('change day', victim);
 
-    
+
     console.log('Day');
     if(!end()){
         io.emit('story message', 'The rest of the Villagers is awake now.');
@@ -150,7 +150,7 @@ io.on('connection', function(socket) {
             io.emit('chat message', socket['name'], msg);
         }
         else
-            io.to('werewolf').emit('chat message', msg);
+            io.to('werewolf').emit('chat message', socket['name'], msg);
     });
 
     socket.on('join werewolf', function() {
@@ -163,8 +163,9 @@ io.on('connection', function(socket) {
     });
 
     function check_username(name) {
-        if (user.indexOf(name) != -1)
+        if (user.indexOf(name) != -1 || name.trim() == '' || name == '_') {
             return false;
+        }
         return true;
     }
 
