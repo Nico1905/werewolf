@@ -41,38 +41,28 @@ $(document).ready(function () {
 
     $('#send_button').on('click', function() {
         var msg = $('#m').val();
-        if (msg != '') {
+        if (msg != '' && !dead && (!night || werewolf)) {
             if (msg == '/info') {
-                show_snackbar('The city i don\'t know is ');
+                show_snackbar('You are playing werewolf');
             }
             else if (msg == '/night') {
-                console.log('send night');
                 socket.emit('night');
-            }
-            else if (msg == '/day') {
-                $('.card').each(function() {
-                    if ($(this).children('p').text() != '_') {
-                        $(this).children('.icon').attr('src', 'villager.svg');
-                    }
-                });
             }
             else if (msg == '/start') {
                 socket.emit('start');
             }
-            else{
+            else {
                 socket.emit('chat message', $('#m').val(), night);
             }
-            $('#m').val('');
-            return false;
         }
+        $('#m').val('');
         return false;
     });
 
     $('#card-container').on('click', '.card', function() {
-        if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night) && $(this).children('p').text() != '_') {
+        if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night) && $(this).children('p').text() != '_' && $(this).children('p').text() != username) {
             socket.emit('voted', $(this).children('p').text());
             voting = false;
-            console.log('voting false click');
             $('.card').removeClass('card-hover');
             $(this).addClass('card-selected');
         }
@@ -86,7 +76,10 @@ $(document).ready(function () {
     socket.on('chat message', function(name, msg) {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-        $('#messages').append('<li class="message-item"><span class="gicon"></span><span class="nickname">' + name + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+        if (night)
+            $('#messages').append('<li class="message-item"><span class="wicon"></span><span class="nickname">' + name + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+        else
+            $('#messages').append('<li class="message-item"><span class="gicon"></span><span class="nickname">' + name + '</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
         $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));
     });
 
@@ -107,10 +100,10 @@ $(document).ready(function () {
         var now = new Date(Date.now());
         var formatted = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
         $('#messages').append('<li class="message-item"><span class="sicon"></span><span class="nickname">Narrator</span><span class="timestamp">' + formatted + '</span><p class="message">' + msg + '</p></li>');
+        $('.messages-wrapper').scrollTop($('.messages-wrapper').prop('scrollHeight'));
     });
 
     socket.on('snackbar message', function(msg) {
-        console.log('sb msg');
         show_snackbar(msg);
     });
 
@@ -134,8 +127,6 @@ $(document).ready(function () {
         if (victim != null) {
             if (victim == username) {
                 dead = true;
-                werewolf = false;
-                voting = false;
                 show_snackbar('You died');
                 console.log('dead');
             } else {
@@ -149,20 +140,18 @@ $(document).ready(function () {
         console.log('vote now');
         if (!dead) {
             if (night) {
-                console.log(werewolf_list);
                 $('.card').each(function() {
                     if (werewolf_list.indexOf($(this).children('p').text()) == -1 && $(this).children('p').text() != '_')
                         $(this).addClass('card-hover');
                 });
             } else {
                 $('.card').each(function() {
-                    if ($(this).children('p').text() != '_') {
+                    if ($(this).children('p').text() != '_' && $(this).children('p').text() != username) {
                         $(this).addClass('card-hover');
                     }
                 });
             }
             voting = true;
-            console.log('voting true vote');
         }
     });
 
@@ -177,8 +166,6 @@ $(document).ready(function () {
         }
         if (victim == username) {
             dead = true;
-            werewolf = false;
-            voting = false;
             show_snackbar('You died');
             console.log('dead');
         } else {
