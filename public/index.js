@@ -187,7 +187,7 @@ $(document).ready(function () {
         kill(victim);
     });
 
-    socket.on('send werewolfs', function(list) {
+    socket.on('send werewolves', function(list) {
         werewolf_list = list;
         $('.card').each(function() {
             if (werewolf_list.indexOf($(this).children('p').text()) != -1)
