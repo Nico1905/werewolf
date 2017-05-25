@@ -17,7 +17,6 @@ function waitForList(count) {
         console.log('wait...');
     } else {
         console.log(werewolfList);
-        //werewolf.emit('send werewolfs', werewolfList); doesn't work
         io.to('werewolf').emit('send werewolfs', werewolfList);
     }
 }
@@ -42,8 +41,8 @@ function maxValue(array){
             max = key;
         console.log('Key: ' + key + ':' + array[key]);
         console.log('Max: ' + max + ':' + array[max]);
-    }  
-    return max;  
+    }
+    return max;
 }
 
 function votingCompleted(){
@@ -58,8 +57,8 @@ function votingCompleted(){
     victims = {};
 
     console.log('Night');
-    io.to('werewolf').emit('vote');
     io.emit('change night', victim);
+    io.to('werewolf').emit('vote');
     waitForVoted(werewolfList, werewolfVotingCompleted);
 }
 
@@ -148,8 +147,7 @@ io.on('connection', function(socket) {
 
     socket.on('night', function(){
         io.emit('change night', null);
-        // werewolf.emit('vote'); doesn't work
-        io.to('werewolf').emit('vote'); // works
+        io.to('werewolf').emit('vote');
 
         waitForVoted(werewolfList, werewolfVotingCompleted);
     });
