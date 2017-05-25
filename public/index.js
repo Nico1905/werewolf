@@ -27,7 +27,7 @@ $(document).ready(function () {
             if ($(this).children('p').text() == name) {
                 $(this).addClass('flipped');
                 $(this).children('.icon').attr('src', 'tombstone.svg');
-                $(this).children('.icon-small').remove();
+                // $(this).children('.icon-small').remove();
                 $(this).children('p').text('_');
                 $('.card').removeClass('card-selected');
             }
@@ -69,9 +69,10 @@ $(document).ready(function () {
     });
 
     $('#card-container').on('click', '.card', function() {
-        if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night)) {
+        if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night) && $(this).children('p').text() != '_') {
             socket.emit('voted', $(this).children('p').text());
             voting = false;
+            console.log('voting false click');
             $('.card').removeClass('card-hover');
             $(this).addClass('card-selected');
         }
@@ -122,6 +123,7 @@ $(document).ready(function () {
     });
 
     socket.on('change night', function(victim) {
+        console.log('night');
         night = true;
         if (werewolf && !dead) {
             $('.card').each(function() {
@@ -132,7 +134,10 @@ $(document).ready(function () {
         if (victim != null) {
             if (victim == username) {
                 dead = true;
+                werewolf = false;
+                voting = false;
                 show_snackbar('You died');
+                console.log('dead');
             } else {
                 show_snackbar(victim + ' died');
             }
@@ -141,16 +146,28 @@ $(document).ready(function () {
     });
 
     socket.on('vote', function() {
+        console.log('vote now');
         if (!dead) {
-            $('.card').each(function() {
-                if (werewolf_list.indexOf($(this).children('p').text()) == -1)
-                    $(this).addClass('card-hover');
-            });
+            if (night) {
+                console.log(werewolf_list);
+                $('.card').each(function() {
+                    if (werewolf_list.indexOf($(this).children('p').text()) == -1 && $(this).children('p').text() != '_')
+                        $(this).addClass('card-hover');
+                });
+            } else {
+                $('.card').each(function() {
+                    if ($(this).children('p').text() != '_') {
+                        $(this).addClass('card-hover');
+                    }
+                });
+            }
             voting = true;
+            console.log('voting true vote');
         }
     });
 
     socket.on('change day', function(victim) {
+        console.log('day');
         night = false;
         if (werewolf) {
             $('.card').each(function() {
@@ -160,12 +177,12 @@ $(document).ready(function () {
         }
         if (victim == username) {
             dead = true;
+            werewolf = false;
+            voting = false;
             show_snackbar('You died');
             console.log('dead');
         } else {
             show_snackbar(victim + ' died');
-            $('.card').addClass('card-hover');
-            voting = true;
         }
         kill(victim);
     });
