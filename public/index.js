@@ -194,4 +194,8 @@ $(document).ready(function () {
     socket.on('spectator', function() {
         $("#m").prop('disabled', true);
     });
+
+    socket.on('user disconnected', function(name) {
+        kill(name);
+    });
 });
