@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var running = false;
+var firstNight = false;
 var werewolfList = [];
 var user = [];
 var victims = {};
@@ -53,6 +54,8 @@ function end(){
             io.emit('story message', 'All the Villagers are dead. Werewolves, you win!');
     else
         io.emit('story message', 'All the Werewolves are dead. Villagers, you win!');
+    running = false;
+    firstNight = false;
     return true;
 
 }
@@ -75,7 +78,7 @@ function votingCompleted(){
         io.emit('change night', victim);
 
         io.emit('story message', 'Nightfall. The Villagers go to sleep. ' +
-            'A few Villagers awake again, but they are no humans anymore. They choose their prey.');
+            'A few Villagers awake again, but they are no humans anymore. They will choose their prey.');
 
         io.to('werewolf').emit('vote');
 
@@ -94,20 +97,21 @@ function werewolfVotingCompleted(){
     voted = 0;
     victims = {};
 
-    io.emit('story message', 'The dawn is breaking and the werewolves' +
+    if(werewolfList > 0){
+        io.emit('story message', 'The dawn is breaking and the werewolves' +
         ' change into their normal appearance. They killed ' + victim + '!');
-    io.emit('change day', victim);
+        io.emit('change day', victim);
 
-
-    console.log('Day');
-    if(!end()){
-        io.emit('story message', 'The rest of the Villagers is awake now.');
-        io.emit('vote');
-        waitForVoted(user, votingCompleted);
-        io.emit('story message', 'Discuss who you want to kill!');
+        console.log('Day');
+        if(!end()){
+            io.emit('story message', 'All the Villagers are awake now.');
+            io.emit('vote');
+            waitForVoted(user, votingCompleted);
+            io.emit('story message', 'Discuss who you want to kill!');
+        }
+        else
+            io.emit('end');
     }
-    else
-        io.emit('end');
 }
 
 io.on('connection', function(socket) {
@@ -122,25 +126,28 @@ io.on('connection', function(socket) {
     }
 
     socket.on('start', function(){
-        console.log('Game has started');
-        running = true;
+        if(!running){
+            console.log('Game has started');
 
-        io.emit('story message', 'Let the Games begin!!');
-        io.clients(function(error, clients){
-            if (error) throw error;
-            console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
-            var count = Math.floor(Math.random() * clients.length/2) + 1;
-            console.log(count);
-            for (var i = count;i > 0; i--) {
-                var client = clients.splice(clients.length * Math.random() | 0, 1)[0]
-                console.log(client);
-                io.to(client).emit('snackbar message', 'You are a werewolf!');
-                io.to(client).emit('werewolf');
-            }
+            io.emit('story message', 'Let the Games begin!!');
+            io.clients(function(error, clients){
+                if (error) throw error;
+                console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+                var count = Math.floor(Math.random() * clients.length/2) + 1;
+                console.log(count);
+                for (var i = count;i > 0; i--) {
+                    var client = clients.splice(clients.length * Math.random() | 0, 1)[0]
+                    console.log(client);
+                    io.to(client).emit('snackbar message', 'You are a werewolf!');
+                    io.to(client).emit('werewolf');
+                }
 
-            io.emit('start game', user);
-            waitForList(count);
-        });
+                io.emit('start game', user);
+                waitForList(count);
+                running = true;
+            });
+        }
+        
 
     })
 
@@ -158,16 +165,7 @@ io.on('connection', function(socket) {
         werewolfList.push(socket['name']);
     });
 
-    socket.on('disconnect', function() {
-        console.log('user disconnected');
-    });
-
-    function check_username(name) {
-        if (user.indexOf(name) != -1 || name.trim() == '' || name == '_') {
-            return false;
-        }
-        return true;
-    }
+    
 
     socket.on('set username', function(name) {
         console.log(name);
@@ -180,16 +178,18 @@ io.on('connection', function(socket) {
     });
 
     socket.on('night', function(){
-        console.log('Night');
-        io.emit('change night', null);
+        if(running && !firstNight){
+            console.log('Night');
+            firstNight = true;
+            io.emit('change night', null);
 
-        io.emit('story message', 'Nightfall. The Villagers go to sleep. ' +
-            'A few Villagers awake again, but they are no humans anymore. They choose their prey.');
+            io.emit('story message', 'Nightfall. The Villagers go to sleep. ' +
+                'A few Villagers awake again, but they are no humans anymore. They will choose their prey.');
 
-        io.to('werewolf').emit('vote');
+            io.to('werewolf').emit('vote');
 
-        io.emit('story message', 'The Werewolves choose their prey.');
-        waitForVoted(werewolfList, werewolfVotingCompleted);
+            waitForVoted(werewolfList, werewolfVotingCompleted);
+        }
     });
 
     socket.on('voted', function(victim, night){
@@ -203,6 +203,25 @@ io.on('connection', function(socket) {
         voted += 1;
         console.log(voted);
     });
+
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+
+        user.splice(user.indexOf(socket['name']), 1);
+        if(werewolfList.indexOf(socket['name']) != -1)
+            werewolfList.splice(socket['name'], 1);
+
+        socket.emit('snackbar message', socket['name'] + ' left the Game!');
+        socket.emit('story message', socket['name'] + ' left the Game!');
+    });
+
+    function check_username(name) {
+        if (user.indexOf(name) != -1 || name.trim() == '' || name == '_') {
+            return false;
+        }
+        return true;
+    }
+
 });
 
 http.listen(3000, function(){
