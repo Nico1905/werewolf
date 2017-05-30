@@ -33,7 +33,6 @@ function waitForVoted(list, finishFunction){
 }
 
 function maxValue(array){
-    console.log(JSON.stringify(array, null, 4))
     var max = null;
     for (var key in array) {
         if(max === null)
@@ -64,6 +63,7 @@ function votingCompleted(){
     console.log(victims);
     var victim = maxValue(victims);
 
+
     user.splice(user.indexOf(victim), 1);
     if(werewolfList.indexOf(victim) != -1)
         werewolfList.splice(victim, 1);
@@ -92,12 +92,15 @@ function werewolfVotingCompleted(){
     console.log(victims);
     var victim = maxValue(victims);
 
+    console.log('the victim is ' + victim);
+
+
     user.splice(user.indexOf(victim), 1);
 
     voted = 0;
     victims = {};
 
-    if(werewolfList > 0){
+    if(werewolfList.length > 0){
         io.emit('story message', 'The dawn is breaking and the werewolves' +
         ' change into their normal appearance. They killed ' + victim + '!');
         io.emit('change day', victim);
@@ -194,7 +197,7 @@ io.on('connection', function(socket) {
 
     socket.on('voted', function(victim, night){
         console.log('voted');
-        console.log(victims[victim]);
+        console.log('Victim already exists: ' + victims[victim]);
 
         if (victims[victim] != undefined)
             victims[victim] += 1;
@@ -211,6 +214,8 @@ io.on('connection', function(socket) {
             user.splice(user.indexOf(socket['name']), 1);
         if(werewolfList.indexOf(socket['name']) != -1)
             werewolfList.splice(socket['name'], 1);
+
+        end();
 
         socket.emit('snackbar message', socket['name'] + ' left the Game!');
         socket.emit('story message', socket['name'] + ' left the Game!');
