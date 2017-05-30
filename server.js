@@ -122,6 +122,13 @@ function werewolfVotingCompleted(){
     }
 }
 
+function check_username(name) {
+        if (user.indexOf(name) != -1 || name.trim() == '' || name == '_') {
+            return false;
+        }
+        return true;
+    }
+
 io.on('connection', function(socket) {
     if(running){
         io.emit('story message', 'A new Ghost is spectating you!');
@@ -130,7 +137,6 @@ io.on('connection', function(socket) {
     }
     else{
         console.log('a user connected');
-        socket.join('villager');
     }
 
     socket.on('start', function(){
@@ -155,9 +161,8 @@ io.on('connection', function(socket) {
                 running = true;
             });
         }
-        
 
-    })
+    });
 
     socket.on('chat message', function(msg, night) {
         console.log(msg);
@@ -225,14 +230,7 @@ io.on('connection', function(socket) {
         socket.emit('snackbar message', socket['name'] + ' left the Game!');
         socket.emit('story message', socket['name'] + ' left the Game!');
         io.emit('user disconnected', socket['name']);
-    });
-
-    function check_username(name) {
-        if (user.indexOf(name) != -1 || name.trim() == '' || name == '_') {
-            return false;
-        }
-        return true;
-    }
+    });  
 
 });
 
