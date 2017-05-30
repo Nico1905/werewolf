@@ -207,7 +207,8 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log('user disconnected');
 
-        user.splice(user.indexOf(socket['name']), 1);
+        if(user.indexOf(socket['name']) != -1)
+            user.splice(user.indexOf(socket['name']), 1);
         if(werewolfList.indexOf(socket['name']) != -1)
             werewolfList.splice(socket['name'], 1);
 
