@@ -46,7 +46,7 @@ function maxValue(array){
 }
 
 function end(){
-    if(werewolfList.length > 0)
+    if(running && werewolfList.length > 0)
         if(user.length - werewolfList.length > 0)
             return false;
         else
