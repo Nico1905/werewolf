@@ -28,6 +28,7 @@ $(document).ready(function () {
                 $(this).children('.icon').attr('src', 'tombstone.svg');
                 $(this).children('p').text('_');
                 $('.card').removeClass('card-selected');
+                $('.card').removeClass('card-hover');
             }
         });
     }
@@ -67,6 +68,7 @@ $(document).ready(function () {
 
     $('#card-container').on('click', '.card', function() {
         if (voting && ((night && werewolf_list.indexOf($(this).children('p').text()) == -1) || !night) && $(this).children('p').text() != '_' && $(this).children('p').text() != username) {
+            // votinh && ((night && can't choose werewolf) || day) && not vote dead && not vote self
             socket.emit('voted', $(this).children('p').text());
             voting = false;
             $('.card').removeClass('card-hover');
