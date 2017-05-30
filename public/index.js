@@ -8,7 +8,6 @@ $(document).ready(function () {
     });
 
     var socket = io();
-    var secret = false;
     var night = false;
     var voting = false;
     var username = '';
@@ -27,11 +26,18 @@ $(document).ready(function () {
             if ($(this).children('p').text() == name) {
                 $(this).addClass('flipped');
                 $(this).children('.icon').attr('src', 'tombstone.svg');
-                // $(this).children('.icon-small').remove();
                 $(this).children('p').text('_');
                 $('.card').removeClass('card-selected');
             }
         });
+    }
+
+    function clear_vars() {
+        night = false;
+        voting = false;
+        werewolf = false;
+        werewolf_list = [];
+        dead = false;
     }
 
     $('#join_button').on('click', function() {
@@ -66,11 +72,6 @@ $(document).ready(function () {
             $('.card').removeClass('card-hover');
             $(this).addClass('card-selected');
         }
-    });
-
-    $('#join_room').change(function() {
-        secret = !secret;
-        socket.emit('start');
     });
 
     socket.on('chat message', function(name, msg) {
@@ -109,7 +110,6 @@ $(document).ready(function () {
 
     socket.on('start game', function(users) {
         console.log('start');
-        console.log(users);
         for (var i = 0; i < users.length; i++) {
             $('#card-container').append('<div class="card"><img src="villager.svg" class="icon"><p class="card-username">' + users[i] + '</p></div>');
         }
@@ -127,6 +127,7 @@ $(document).ready(function () {
         if (victim != null) {
             if (victim == username) {
                 dead = true;
+                $("#m").prop('disabled', true);
                 show_snackbar('You died');
                 console.log('dead');
             } else {
@@ -166,6 +167,7 @@ $(document).ready(function () {
         }
         if (victim == username) {
             dead = true;
+            $("#m").prop('disabled', true);
             show_snackbar('You died');
             console.log('dead');
         } else {
@@ -181,6 +183,15 @@ $(document).ready(function () {
                 $(this).append('<img src="werewolf.svg" class="icon-small">');
         });
         console.log('got werewolves');
-        console.log(werewolf_list);
+    });
+
+    socket.on('end', function() {
+        clear_vars();
+        $('#card-container').empty();
+        $("#m").prop('disabled', false);
+    });
+
+    socket.on('spectator', function() {
+        $("#m").prop('disabled', true);
     });
 });
