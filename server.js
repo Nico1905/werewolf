@@ -46,15 +46,20 @@ function maxValue(array){
 }
 
 function end(){
-    if(running && werewolfList.length > 0)
-        if(user.length - werewolfList.length > 0)
-            return false;
+    if(running){
+        if(werewolfList.length > 0)
+            if(user.length - werewolfList.length > 0)
+                return false;
+            else
+                io.emit('story message', 'All the Villagers are dead. Werewolves, you win!');
         else
-            io.emit('story message', 'All the Villagers are dead. Werewolves, you win!');
-    else
-        io.emit('story message', 'All the Werewolves are dead. Villagers, you win!');
-    running = false;
-    firstNight = false;
+            io.emit('story message', 'All the Werewolves are dead. Villagers, you win!');
+        running = false;
+        firstNight = false;
+    }
+    else{
+        return false;
+    }
     return true;
 
 }
