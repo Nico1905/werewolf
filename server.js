@@ -117,7 +117,7 @@ function werewolfVotingCompleted(){
 io.on('connection', function(socket) {
     if(running){
         io.emit('story message', 'A new Ghost is spectating you!');
-        socket.join('spectator');
+        socket.emit('spectator');
         console.log('a spectator connected');
     }
     else{
