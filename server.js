@@ -219,6 +219,7 @@ io.on('connection', function(socket) {
 
         socket.emit('snackbar message', socket['name'] + ' left the Game!');
         socket.emit('story message', socket['name'] + ' left the Game!');
+        io.emit('user disconnected', socket['name']);
     });
 
     function check_username(name) {
